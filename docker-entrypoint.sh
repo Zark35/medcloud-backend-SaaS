@@ -40,5 +40,44 @@ gosu appuser python manage.py migrate --noinput
 echo "Recolectando archivos estáticos..."
 gosu appuser python manage.py collectstatic --noinput
 
+if [ "${CREATE_SUPERUSER:-False}" = "True" ]; then
+  if [ -z "${DJANGO_SUPERUSER_USERNAME:-}" ] || [ -z "${DJANGO_SUPERUSER_EMAIL:-}" ] || [ -z "${DJANGO_SUPERUSER_PASSWORD:-}" ]; then
+    echo "CREATE_SUPERUSER=True pero faltan DJANGO_SUPERUSER_USERNAME/EMAIL/PASSWORD; se omite creación."
+  else
+    echo "Verificando superusuario por defecto..."
+    gosu appuser python - <<'PY'
+import os
+from django.contrib.auth import get_user_model
+
+username = os.environ["DJANGO_SUPERUSER_USERNAME"]
+email = os.environ["DJANGO_SUPERUSER_EMAIL"]
+password = os.environ["DJANGO_SUPERUSER_PASSWORD"]
+
+User = get_user_model()
+user = User.objects.filter(username=username).first()
+
+if user:
+    updated = False
+    if not user.is_staff:
+        user.is_staff = True
+        updated = True
+    if not user.is_superuser:
+        user.is_superuser = True
+        updated = True
+    if email and user.email != email:
+        user.email = email
+        updated = True
+    if updated:
+        user.save(update_fields=["is_staff", "is_superuser", "email"])
+        print(f"Superusuario '{username}' ya existía; se actualizaron flags/email.")
+    else:
+        print(f"Superusuario '{username}' ya existe; sin cambios.")
+else:
+    User.objects.create_superuser(username=username, email=email, password=password)
+    print(f"Superusuario '{username}' creado.")
+PY
+  fi
+fi
+
 echo "Iniciando aplicación..."
 exec gosu appuser "$@"
