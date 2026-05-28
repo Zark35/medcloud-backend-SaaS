@@ -1,0 +1,8 @@
+# Scripts de shell deben usar LF para funcionar en contenedores Linux
+*.sh text eol=lf
+docker-entrypoint.sh text eol=lf
+
+# Archivos Docker
+Dockerfile text eol=lf
+docker-compose.yml text eol=lf
+nginx/nginx.conf text eol=lf

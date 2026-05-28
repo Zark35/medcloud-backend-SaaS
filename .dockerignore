@@ -1,0 +1,36 @@
+# Entorno virtual local (no debe copiarse a la imagen)
+.venv/
+venv/
+env/
+
+# Git y IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Variables de entorno (se inyectan en runtime vía docker-compose)
+.env
+.env.*
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+
+# Base de datos local SQLite
+*.sqlite3
+db.sqlite3
+
+# Archivos generados en runtime (se persisten con volumes)
+media/
+staticfiles/
+
+# Documentación y Docker (no necesarios dentro de la imagen de la app)
+README.md
+DOCKER.md
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

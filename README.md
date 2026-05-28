@@ -21,7 +21,22 @@ Instalar:
 
 ## Variables de entorno
 
-Copiar `.env.example` a `.env` y ajustar las variables. Los valores por defecto permiten desarrollo local con SQLite.
+**Sin Docker (SQLite o Postgres local):** copiar `.env.example` a `.env`.
+
+**Con Docker:** copiar `.env.docker.example` a `.env` y ver [DOCKER.md](./DOCKER.md).
+
+## Docker (producción local: Nginx + Gunicorn)
+
+```bash
+cp .env.docker.example .env
+docker compose up --build
+```
+
+- API / Swagger: http://localhost:8000/api/docs/
+- Health: http://localhost:8000/api/health/
+- Arquitectura: [PRODUCTION.md](./PRODUCTION.md)
+- Docker: [DOCKER.md](./DOCKER.md)
+- Render: [DEPLOY_RENDER.md](./DEPLOY_RENDER.md)
 
 ## Comandos
 
@@ -49,4 +64,5 @@ cd "c:\Users\Andres\Desktop\Proyecto de SaaS"
 2. Login: `POST /api/auth/login/` con JSON `{ "username": "demo", "password": "strongpass123" }`
 3. Añadir cabecera `Authorization: Bearer <access_token>` para las rutas protegidas.
 4. Crear paciente: `POST /api/patients/`.
-5. Crear examen: `POST /api/medical-exams/` con `form-data` y campo `exam_file`.
+5. Crear examen: `POST /api/medical-exams/` con `form-data` y campo `exam_file` (PDF, JPG, PNG, WEBP; máx. 10 MB).
+6. Descargar archivo: usar `exam_file_url` del response en `GET /api/medical-exams/`.
