@@ -47,7 +47,11 @@ if [ "${CREATE_SUPERUSER:-False}" = "True" ]; then
     echo "Verificando superusuario por defecto..."
     gosu appuser python - <<'PY'
 import os
+import django
 from django.contrib.auth import get_user_model
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "medcloud.settings")
+django.setup()
 
 username = os.environ["DJANGO_SUPERUSER_USERNAME"]
 email = os.environ["DJANGO_SUPERUSER_EMAIL"]
